@@ -25,6 +25,7 @@
 #define FEMALEPIN       6
 #define RELEASESERVOPIN 16
 #define LOCKERSERVOPIN  17
+#define BUTTONLEDPIN    19
 
 // dispenser
 #define FEMALE  0
@@ -77,6 +78,10 @@ void setup() {
   pinMode(LEDPIN, OUTPUT);  // Switches on/off all leds
   digitalWrite(LEDPIN, ON);
 
+  pinMode(21, OUTPUT);
+  digitalWrite(21, LOW); // Use 3 as GND
+  pinMode(BUTTONLEDPIN, OUTPUT);
+
   releaseservo.attach(RELEASESERVOPIN);  // attaches the servo on pin 9 to the servo object
   lockerservo.attach(LOCKERSERVOPIN);  // attaches the servo on pin 9 to the servo object
 
@@ -112,6 +117,7 @@ void loop() {
       {
         Serial.println("Drop male button");
         doVisuals2(); 
+        digitalWrite(BUTTONLEDPIN, LOW);
         dropButton(MALE);
         EEPROM.update(MALEDISPENSESADDRESS, EEPROM.read(MALEDISPENSESADDRESS)+1);
         for(int i = 0; i < (usageTimeout*10); i++)
@@ -133,11 +139,13 @@ void loop() {
         }
         //delay(usageTimeout*1000);
         Serial.println("Ready");
+        digitalWrite(BUTTONLEDPIN, HIGH);
       }
       else if((digitalRead(FEMALEPIN) == HIGH) && ((digitalRead(MALEPIN) == LOW)))
       {
-        Serial.println("Drop female button");
+        Serial.println("Drop female button");        
         doVisuals2 (); 
+        digitalWrite(BUTTONLEDPIN, LOW);
         dropButton(FEMALE);
         EEPROM.update(FEMALEDISPENSESADDRESS, EEPROM.read(FEMALEDISPENSESADDRESS)+1);
         for(int i = 0; i < (usageTimeout*10); i++)
@@ -159,6 +167,7 @@ void loop() {
         }
         //delay(usageTimeout*1000);
         Serial.println("Ready");
+        digitalWrite(BUTTONLEDPIN, HIGH);
       }
   }
   else
@@ -358,19 +367,23 @@ void doVisuals2(void)
   {
     digitalWrite(10, LOW);
     digitalWrite(7, LOW);
+    digitalWrite(BUTTONLEDPIN, LOW);
     digitalWrite(LEDPIN, LOW);
     delay(500);
     digitalWrite(10, HIGH);
     digitalWrite(7, HIGH);
+    digitalWrite(BUTTONLEDPIN, HIGH);
     digitalWrite(LEDPIN, HIGH);
     delay(500);
   }
     digitalWrite(10, LOW);
     digitalWrite(7, LOW);
+    digitalWrite(BUTTONLEDPIN, LOW);
     digitalWrite(LEDPIN, LOW);
     delay(500);
     digitalWrite(10, LOW);
     digitalWrite(7, LOW);
+    digitalWrite(BUTTONLEDPIN, HIGH);
     digitalWrite(LEDPIN, HIGH);
 }
 
